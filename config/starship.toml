@@ -1,0 +1,41 @@
+
+add_newline = false
+format = """(bold green) $username$hostname $directory$aws $python $git_status> """
+right_format = """$git_branch $git_commit $time"""
+
+[username]
+style_user = "green bold"
+style_root = "red bold"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style)'
+
+
+[hostname]
+ssh_only = false
+format = '@[$hostname](bold yellow)'
+trim_at = "."
+disabled = false
+
+[time]
+disabled = false
+format = '[$time]($style) '
+
+[git_status]
+conflicted = '🏳'
+up_to_date = '✓'
+untracked = '🤷'
+stashed = '📦'
+modified = '📝'
+staged = '[++\($count\)](green)'
+renamed = '👅'
+deleted = '🗑'
+ahead = '⇡${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+behind = '⇣${count}'
+
+[python]
+format = '[(\($virtualenv\))]($style)'
