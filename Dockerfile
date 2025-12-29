@@ -10,15 +10,12 @@ LABEL exe.dev/login-user="exedev"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
-# Note: openssh-server provides /etc/pam.d/sshd needed by exe.dev's sshd
-# libssh-gcrypt-4 and openssh-sftp-server match exeuntu base image
-# RUN apt-get update && apt-get install -y \
-#     curl git zsh sudo build-essential ca-certificates gnupg \
-#     python3 python3-pip \
-#     eza bat zoxide \
-#     openssh-server openssh-sftp-server libssh-gcrypt-4 \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && ln -s /usr/bin/batcat /usr/local/bin/bat
+RUN apt-get update && apt-get install -y \
+    curl git zsh sudo build-essential ca-certificates gnupg \
+    python3 python3-pip \
+    eza bat zoxide \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/batcat /usr/local/bin/bat
 
 # GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
