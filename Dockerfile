@@ -42,15 +42,15 @@ RUN userdel -r ubuntu 2>/dev/null || true \
 
 
 # Copy Claude configuration files (chown to exedev for later copy)
-COPY --chown=1000:1000 CLAUDE.global.md /tmp/CLAUDE.global.md
-COPY --chown=1000:1000 settings.json /tmp/settings.json
-COPY --chown=1000:1000 skills /tmp/skills
+COPY --chown=1000:1000 files/claude/CLAUDE.global.md /tmp/CLAUDE.global.md
+COPY --chown=1000:1000 files/claude/settings.json /tmp/settings.json
+COPY --chown=1000:1000 files/claude/skills /tmp/skills
 
 # Copy shell configuration files
-COPY --chown=1000:1000 zshrc /tmp/zshrc
-COPY --chown=1000:1000 zshenv /tmp/zshenv
-COPY --chown=1000:1000 zprofile /tmp/zprofile
-COPY --chown=1000:1000 config/starship.toml /tmp/starship.toml
+COPY --chown=1000:1000 files/shell/zshrc /tmp/zshrc
+COPY --chown=1000:1000 files/shell/zshenv /tmp/zshenv
+COPY --chown=1000:1000 files/shell/zprofile /tmp/zprofile
+COPY --chown=1000:1000 files/config/starship.toml /tmp/starship.toml
 
 USER exedev
 WORKDIR /home/exedev
