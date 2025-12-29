@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-LABEL exe.dev/login-user="exedev"
+LABEL exe.dev/login-user=exedev
 
 # # Default proxy ports for exe.dev HTTPS proxy
 # EXPOSE 8000 9999
