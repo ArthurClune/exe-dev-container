@@ -1,5 +1,7 @@
 # ZSH environment configuration
 
+# Fix TERM if not set properly (e.g., when using su -)
+[[ "$TERM" == "dumb" || "$TERM" == "unknown" || -z "$TERM" ]] && export TERM=xterm-256color
 
 PATH=$HOME/bin:$HOME/.local/bin::/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 

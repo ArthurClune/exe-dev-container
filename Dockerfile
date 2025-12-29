@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+LABEL exe.dev/login-user="exedev"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
@@ -36,8 +38,6 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN useradd -m -s /bin/zsh exedev \
     && echo "exedev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # Copy Claude configuration files
 COPY CLAUDE.global.md /tmp/CLAUDE.global.md
@@ -70,5 +70,4 @@ RUN mkdir -p ~/.config \
     && cp /tmp/zprofile ~/.zprofile \
     && cp /tmp/starship.toml ~/.config/starship.toml
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["zsh"]
+CMD ["/bin/zsh"]
