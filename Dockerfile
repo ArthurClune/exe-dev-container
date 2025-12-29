@@ -82,7 +82,9 @@ RUN mkdir -p ~/.config \
     && cp /tmp/starship.toml ~/.config/starship.toml
 
 # Copy and set up init script (required for systemd)
+USER root
 COPY files/init /usr/local/bin/init
 RUN chmod +x /usr/local/bin/init
+
 USER exedev
 CMD ["/usr/local/bin/init"]
