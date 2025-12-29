@@ -11,6 +11,8 @@ Your Dockerfile must have:
 | Login user label | `LABEL exe.dev/login-user="exedev"` |
 | User with UID 1000 | `useradd -m -s /bin/zsh -u 1000 exedev` |
 | Container runs as root | `USER root` at end of Dockerfile |
+| EXEUNTU env var | `ENV EXEUNTU=1` |
+| Expose ports | `EXPOSE 8000 9999` |
 
 ## Required Changes
 
@@ -53,6 +55,18 @@ You must remove this user before creating your own user with UID 1000, otherwise
 ### 3. Container Must Run as Root
 
 **Important**: exe.dev requires the container to run as root so it can set up SSH infrastructure. The `exe.dev/login-user` label determines which user SSH sessions use.
+
+### 4. Set the EXEUNTU Environment Variable
+
+exe.dev requires the `EXEUNTU=1` environment variable to identify compatible images:
+
+```dockerfile
+ENV EXEUNTU=1
+```
+
+Without this, SSH authentication will fail with "unable to authenticate".
+
+### 5. Container Must End with USER root
 
 ```dockerfile
 # Do user-specific setup first
@@ -124,7 +138,8 @@ For **bash**:
 FROM ubuntu:24.04
 
 LABEL exe.dev/login-user="devuser"
-
+EXPOSE 8000 9999
+ENV EXEUNTU=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install packages
