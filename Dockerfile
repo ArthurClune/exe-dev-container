@@ -81,6 +81,6 @@ RUN mkdir -p ~/.config \
 
 # Copy and set up init script (required for systemd)
 USER root
-COPY files/init /usr/local/bin/init
-RUN chmod +x /usr/local/bin/init
-CMD ["/usr/local/bin/init"]
+# COPY files/init /usr/local/bin/init
+# RUN chmod +x /usr/local/bin/init
+# CMD ["/usr/local/bin/init"]
