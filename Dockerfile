@@ -7,6 +7,9 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+USER root
+RUN touch /etc/.custom-image
+
 # System packages
 RUN apt-get update && apt-get install -y \
     curl git zsh sudo build-essential ca-certificates gnupg \
@@ -75,3 +78,9 @@ RUN mkdir -p ~/.config \
     && cp /tmp/zshenv ~/.zshenv \
     && cp /tmp/zprofile ~/.zprofile \
     && cp /tmp/starship.toml ~/.config/starship.toml
+
+# Copy and set up init script (required for systemd)
+USER root
+COPY files/init /usr/local/bin/init
+RUN chmod +x /usr/local/bin/init
+CMD ["/usr/local/bin/init"]
