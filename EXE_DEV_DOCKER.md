@@ -28,12 +28,21 @@ Key points:
 - Use `-s /bin/zsh` or `-s /bin/bash` to set the login shell
 - Grant sudo access if needed (recommended for development containers)
 
-### 3. Set the Working Directory
+### 3. Container Must Run as Root
+
+**Important**: exe.dev requires the container to run as root so it can set up SSH infrastructure. The `exe.dev/login-user` label determines which user SSH sessions use.
 
 ```dockerfile
+# Do user-specific setup first
 USER your-username
+RUN setup-user-stuff...
+
+# Then switch back to root at the end
+USER root
 WORKDIR /home/your-username
 ```
+
+Do NOT leave `USER your-username` as the final user - exe.dev's init process needs root to configure `/exe.dev/`.
 
 ## What exe.dev Provides
 
@@ -105,13 +114,16 @@ RUN apt-get update && apt-get install -y \
 RUN useradd -m -s /bin/zsh devuser \
     && echo "devuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-USER devuser
-WORKDIR /home/devuser
-
 # Copy shell configuration
-COPY --chown=devuser:devuser zshrc /home/devuser/.zshrc
+COPY zshrc /tmp/zshrc
 
-CMD ["/bin/zsh"]
+# Switch to user for user-specific setup
+USER devuser
+RUN cp /tmp/zshrc ~/.zshrc
+
+# Switch back to root for exe.dev compatibility
+USER root
+WORKDIR /home/devuser
 ```
 
 ## Exposing Ports

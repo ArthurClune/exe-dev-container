@@ -52,6 +52,16 @@ else
 fi
 echo
 
+# Test 2b: Check container runs as root (required for exe.dev)
+info "Checking container runs as root..."
+IMGUSER=$(docker inspect "$IMAGE_NAME" --format '{{.Config.User}}' 2>/dev/null || echo "")
+if [ "$IMGUSER" = "root" ] || [ -z "$IMGUSER" ]; then
+    pass "Container runs as root (required for exe.dev SSH setup)"
+else
+    fail "Container runs as '$IMGUSER', must run as root for exe.dev"
+fi
+echo
+
 # Test 3: Check user exists and has correct shell
 info "Checking user configuration..."
 docker run --rm "$IMAGE_NAME" id exedev >/dev/null 2>&1 && pass "User 'exedev' exists" || fail "User 'exedev' not found"

@@ -70,4 +70,7 @@ RUN mkdir -p ~/.config \
     && cp /tmp/zprofile ~/.zprofile \
     && cp /tmp/starship.toml ~/.config/starship.toml
 
-CMD ["/bin/zsh"]
+# exe.dev requires container to run as root for SSH infrastructure setup
+# The exe.dev/login-user label determines the SSH login user
+USER root
+WORKDIR /home/exedev
