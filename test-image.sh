@@ -83,7 +83,7 @@ echo
 
 # Test 4: Check key tools are installed
 info "Checking installed tools..."
-TOOLS="zsh git node npm gh uv starship bat eza zoxide fzf claude"
+TOOLS="zsh git node npm gh uv starship bat eza zoxide claude"
 for tool in $TOOLS; do
     if docker run --rm "$IMAGE_NAME" which "$tool" >/dev/null 2>&1; then
         pass "$tool is installed"
@@ -91,6 +91,13 @@ for tool in $TOOLS; do
         fail "$tool is not installed"
     fi
 done
+
+# fzf is installed in user home, check separately
+if docker run --rm "$IMAGE_NAME" test -x /home/exedev/.fzf/bin/fzf; then
+    pass "fzf is installed (in ~/.fzf/bin/)"
+else
+    fail "fzf is not installed"
+fi
 echo
 
 # Test 5: Check shell configuration files
@@ -133,9 +140,9 @@ else
 fi
 echo
 
-# Test 9: Test shell initialization (non-interactive)
+# Test 9: Test shell initialization (non-interactive, as exedev user)
 info "Testing shell initialization..."
-if docker run --rm "$IMAGE_NAME" zsh -c 'echo $SHELL' | grep -q '/bin/zsh'; then
+if docker run --rm "$IMAGE_NAME" su - exedev -c 'zsh -c "echo \$SHELL"' | grep -q '/bin/zsh'; then
     pass "Shell initializes correctly"
 else
     fail "Shell initialization failed"

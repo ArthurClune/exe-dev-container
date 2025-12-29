@@ -35,20 +35,22 @@ RUN curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 RUN npm install -g @anthropic-ai/claude-code
 
 # Create user exedev with sudo (UID 1000 required by exe.dev)
-RUN useradd -m -s /bin/zsh -u 1000 exedev \
+# Ubuntu 24.04 has a default 'ubuntu' user with UID 1000, remove it first
+RUN userdel -r ubuntu 2>/dev/null || true \
+    && useradd -m -s /bin/zsh -u 1000 exedev \
     && echo "exedev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 
-# Copy Claude configuration files
-COPY CLAUDE.global.md /tmp/CLAUDE.global.md
-COPY settings.json /tmp/settings.json
-COPY skills /tmp/skills
+# Copy Claude configuration files (chown to exedev for later copy)
+COPY --chown=1000:1000 CLAUDE.global.md /tmp/CLAUDE.global.md
+COPY --chown=1000:1000 settings.json /tmp/settings.json
+COPY --chown=1000:1000 skills /tmp/skills
 
 # Copy shell configuration files
-COPY zshrc /tmp/zshrc
-COPY zshenv /tmp/zshenv
-COPY zprofile /tmp/zprofile
-COPY config/starship.toml /tmp/starship.toml
+COPY --chown=1000:1000 zshrc /tmp/zshrc
+COPY --chown=1000:1000 zshenv /tmp/zshenv
+COPY --chown=1000:1000 zprofile /tmp/zprofile
+COPY --chown=1000:1000 config/starship.toml /tmp/starship.toml
 
 USER exedev
 WORKDIR /home/exedev
