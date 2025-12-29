@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Wraps systemd init with important precursor commands.
+#
+
+if [[ $$ != 1 ]]; then
+    echo "Must be run as pid 1 for systemd to start."
+    exit 1
+fi
+
+mkdir -p /run/systemd
+if [[ ! -f /sys/fs/cgroup/cgroup.controllers ]]; then
+    mount -t cgroup2 none /sys/fs/cgroup
+fi
+
+if [[ -w /proc/sys/net/ipv4/ip_unprivileged_port_start ]]; then
+    printf '0\n' >/proc/sys/net/ipv4/ip_unprivileged_port_start
+fi
+if [[ -w /proc/sys/net/ipv6/ip_unprivileged_port_start ]]; then
+    printf '0\n' >/proc/sys/net/ipv6/ip_unprivileged_port_start
+fi
+
+# Kata containers default to mounting this readonly
+mount -o remount,rw /proc/sys 2>/dev/null || true
+
+exec /sbin/init --log-target=syslog --show-status=true

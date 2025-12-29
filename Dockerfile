@@ -85,3 +85,9 @@ RUN mkdir -p ~/.config \
 # The exe.dev/login-user label determines the SSH login user
 USER root
 WORKDIR /home/exedev
+
+# Copy and set up init script (required for systemd)
+COPY files/init /usr/local/bin/init
+RUN chmod +x /usr/local/bin/init
+
+CMD ["/usr/local/bin/init"]
