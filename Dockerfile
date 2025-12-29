@@ -62,6 +62,8 @@ COPY --chown=1000:1000 files/config/starship.toml /tmp/starship.toml
 USER exedev
 WORKDIR /home/exedev
 
+RUN touch .hushlogin
+
 # Install fzf from git (apt version is outdated)
 RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
     && ~/.fzf/install --all
@@ -80,7 +82,7 @@ RUN mkdir -p ~/.config \
     && cp /tmp/starship.toml ~/.config/starship.toml
 
 # Copy and set up init script (required for systemd)
-USER root
-# COPY files/init /usr/local/bin/init
-# RUN chmod +x /usr/local/bin/init
-# CMD ["/usr/local/bin/init"]
+COPY files/init /usr/local/bin/init
+RUN chmod +x /usr/local/bin/init
+USER exedev
+CMD ["/usr/local/bin/init"]
