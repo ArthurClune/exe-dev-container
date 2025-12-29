@@ -11,11 +11,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
 # Note: openssh-server provides /etc/pam.d/sshd needed by exe.dev's sshd
+# libssh-gcrypt-4 and openssh-sftp-server match exeuntu base image
 RUN apt-get update && apt-get install -y \
     curl git zsh sudo build-essential ca-certificates gnupg \
     python3 python3-pip \
     eza bat zoxide \
-    openssh-server \
+    openssh-server openssh-sftp-server libssh-gcrypt-4 \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/batcat /usr/local/bin/bat
 
@@ -43,8 +44,9 @@ RUN npm install -g @anthropic-ai/claude-code
 
 # Create user exedev with sudo (UID 1000 required by exe.dev)
 # Ubuntu 24.04 has a default 'ubuntu' user with UID 1000, remove it first
+# Add to same groups as exeuntu base image, with matching GECOS field
 RUN userdel -r ubuntu 2>/dev/null || true \
-    && useradd -m -s /bin/zsh -u 1000 exedev \
+    && useradd -m -s /bin/zsh -u 1000 -c "exe.dev user" -G adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev exedev \
     && echo "exedev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 
