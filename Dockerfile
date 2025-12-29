@@ -1,12 +1,5 @@
-FROM ubuntu:24.04
+FROM ghcr.io/boldsoftware/exeuntu:latest
 
-LABEL exe.dev/login-user="exedev"
-
-# Default proxy ports for exe.dev HTTPS proxy
-EXPOSE 8000 9999
-
-# EXEUNTU marker for exe.dev compatibility
-ENV EXEUNTU=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
@@ -16,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     curl git zsh sudo build-essential ca-certificates gnupg \
     python3 python3-pip \
     eza bat zoxide \
-    openssh-server openssh-sftp-server libssh-gcrypt-4 \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/batcat /usr/local/bin/bat
 
@@ -41,14 +33,6 @@ RUN curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 
 # Claude Code
 RUN npm install -g @anthropic-ai/claude-code
-
-# Create user exedev with sudo (UID 1000 required by exe.dev)
-# Ubuntu 24.04 has a default 'ubuntu' user with UID 1000, remove it first
-# Add to same groups as exeuntu base image, with matching GECOS field
-RUN userdel -r ubuntu 2>/dev/null || true \
-    && useradd -m -s /bin/zsh -u 1000 -c "exe.dev user" -G adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev exedev \
-    && echo "exedev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
 
 # Copy Claude configuration files (chown to exedev for later copy)
 COPY --chown=1000:1000 files/claude/CLAUDE.global.md /tmp/CLAUDE.global.md
@@ -85,9 +69,5 @@ RUN mkdir -p ~/.config \
 # The exe.dev/login-user label determines the SSH login user
 USER root
 WORKDIR /home/exedev
-
-# Copy and set up init script (required for systemd)
-COPY files/init /usr/local/bin/init
-RUN chmod +x /usr/local/bin/init
 
 CMD ["/usr/local/bin/init"]
