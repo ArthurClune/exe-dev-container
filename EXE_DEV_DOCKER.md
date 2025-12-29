@@ -29,7 +29,8 @@ This label tells exe.dev which user account to use when establishing SSH session
 Create a user that matches the label above with **UID 1000**:
 
 ```dockerfile
-RUN useradd -m -s /bin/zsh -u 1000 your-username \
+RUN userdel -r ubuntu 2>/dev/null || true \
+    && useradd -m -s /bin/zsh -u 1000 your-username \
     && echo "your-username ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 ```
 
@@ -38,6 +39,16 @@ Key points:
 - Use `-m` to create a home directory
 - Use `-s /bin/zsh` or `-s /bin/bash` to set the login shell
 - Grant sudo access if needed (recommended for development containers)
+
+#### Ubuntu Base Image Note
+
+Ubuntu 24.04 (and some other versions) ships with a default `ubuntu` user that already has UID 1000:
+
+```
+ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+```
+
+You must remove this user before creating your own user with UID 1000, otherwise `useradd -u 1000` will fail with "UID 1000 is not unique". The `userdel -r ubuntu` command removes both the user and their home directory. The `2>/dev/null || true` ensures the build doesn't fail if the user doesn't exist (for base images without a default user).
 
 ### 3. Container Must Run as Root
 
@@ -122,7 +133,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create user with sudo access (UID 1000 required)
-RUN useradd -m -s /bin/zsh -u 1000 devuser \
+# Remove default ubuntu user first (has UID 1000 in Ubuntu 24.04)
+RUN userdel -r ubuntu 2>/dev/null || true \
+    && useradd -m -s /bin/zsh -u 1000 devuser \
     && echo "devuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Copy shell configuration
