@@ -3,6 +3,10 @@
 # Fix TERM if not set properly (e.g., when using su -)
 [[ "$TERM" == "dumb" || "$TERM" == "unknown" || -z "$TERM" ]] && export TERM=xterm-256color
 
+# Unset HOST so zsh picks up the correct hostname at runtime
+# (prevents build-time hostname from being baked into the image)
+unset HOST
+
 PATH=$HOME/bin:$HOME/.local/bin::/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 
 export SHELL=/bin/zsh
