@@ -86,5 +86,4 @@ USER root
 COPY files/init /usr/local/bin/init
 RUN chmod +x /usr/local/bin/init
 
-USER exedev
 CMD ["/usr/local/bin/init"]
