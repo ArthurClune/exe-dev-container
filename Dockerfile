@@ -5,6 +5,8 @@ LABEL exe.dev/login-user="exedev"
 # Default proxy ports for exe.dev HTTPS proxy
 EXPOSE 8000 9999
 
+# EXEUNTU marker for exe.dev compatibility
+ENV EXEUNTU=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
