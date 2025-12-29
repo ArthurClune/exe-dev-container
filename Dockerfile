@@ -10,10 +10,12 @@ ENV EXEUNTU=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
+# Note: openssh-server provides /etc/pam.d/sshd needed by exe.dev's sshd
 RUN apt-get update && apt-get install -y \
     curl git zsh sudo build-essential ca-certificates gnupg \
     python3 python3-pip \
     eza bat zoxide \
+    openssh-server \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/batcat /usr/local/bin/bat
 
