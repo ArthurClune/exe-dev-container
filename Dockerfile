@@ -1,12 +1,10 @@
 FROM ubuntu:24.04
 
-LABEL exe.dev/login-user="exedev"
+# LABEL exe.dev/login-user="exedev"
 
 # # Default proxy ports for exe.dev HTTPS proxy
 # EXPOSE 8000 9999
 
-# # EXEUNTU marker for exe.dev compatibility
-# ENV EXEUNTU=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
@@ -77,14 +75,3 @@ RUN mkdir -p ~/.config \
     && cp /tmp/zshenv ~/.zshenv \
     && cp /tmp/zprofile ~/.zprofile \
     && cp /tmp/starship.toml ~/.config/starship.toml
-
-# # exe.dev requires container to run as root for SSH infrastructure setup
-# # The exe.dev/login-user label determines the SSH login user
-# USER root
-# WORKDIR /home/exedev
-
-# # Copy and set up init script (required for systemd)
-# COPY files/init /usr/local/bin/init
-# RUN chmod +x /usr/local/bin/init
-
-# CMD ["/usr/local/bin/init"]
