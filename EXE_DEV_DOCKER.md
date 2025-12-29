@@ -160,6 +160,30 @@ EXPOSE 3000 8080
 
 Access via `https://your-vm.exe.xyz` (default port) or `https://your-vm.exe.xyz:3000/` for specific ports.
 
+## Connecting to Your VM
+
+### SSH Connection Syntax
+
+**Important**: exe.dev routes SSH connections based on the **username**, not the hostname.
+
+```bash
+# Correct - connects to VM named "myvm"
+ssh myvm.exe.xyz
+
+# Also correct - explicitly no username
+ssh -o User= myvm.exe.xyz
+
+# WRONG - connects to VM named "arthur", not "myvm"!
+ssh arthur@myvm.exe.xyz
+```
+
+The username in the SSH command specifies which VM to connect to. If you specify a username like `arthur@myvm.exe.xyz`, exe.dev will route you to the VM named `arthur`, ignoring the hostname entirely.
+
+To connect to a specific VM, just use the hostname without a username:
+```bash
+ssh your-vm-name.exe.xyz
+```
+
 ## Troubleshooting
 
 ### SSH Authentication Fails ("SSH keys are required")
@@ -201,4 +225,18 @@ LABEL exe.dev/login-user="your-username"
 **Fix**: Add to `~/.zshenv` or `~/.bashrc`:
 ```bash
 [[ "$TERM" == "dumb" || -z "$TERM" ]] && export TERM=xterm-256color
+```
+
+### SSH Connects to Wrong VM
+
+**Cause**: You specified a username in the SSH command.
+
+exe.dev uses the SSH username to determine which VM to connect to:
+```bash
+ssh alice@myvm.exe.xyz  # Connects to VM "alice", NOT "myvm"!
+```
+
+**Fix**: Don't specify a username - just use the hostname:
+```bash
+ssh myvm.exe.xyz  # Connects to VM "myvm"
 ```
