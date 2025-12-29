@@ -103,11 +103,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 # Instead, use CMD for the default shell:
 CMD ["/bin/zsh"]
 ```
-
-### Don't Install SSH Server
-
-exe.dev provides its own SSH infrastructure. Installing openssh-server is unnecessary and may conflict.
-
 ## Shell Configuration Tips
 
 ### Handle Missing TERM Variable
@@ -179,24 +174,14 @@ Access via `https://your-vm.exe.xyz` (default port) or `https://your-vm.exe.xyz:
 
 ### SSH Connection Syntax
 
-**Important**: exe.dev routes SSH connections based on the **username**, not the hostname.
+**Important**: exe.dev routes SSH connections based on the **username**, not the hostname. The user must be `exedev`
 
 ```bash
 # Correct - connects to VM named "myvm"
-ssh myvm.exe.xyz
-
-# Also correct - explicitly no username
-ssh -o User= myvm.exe.xyz
+ssh exedev@myvm.exe.xyz
 
 # WRONG - connects to VM named "arthur", not "myvm"!
 ssh arthur@myvm.exe.xyz
-```
-
-The username in the SSH command specifies which VM to connect to. If you specify a username like `arthur@myvm.exe.xyz`, exe.dev will route you to the VM named `arthur`, ignoring the hostname entirely.
-
-To connect to a specific VM, just use the hostname without a username:
-```bash
-ssh your-vm-name.exe.xyz
 ```
 
 ## Troubleshooting
@@ -224,7 +209,7 @@ docker run --rm your-image id your-username            # Should show: uid=1000
 
 **Fix**: Add the label to your Dockerfile:
 ```dockerfile
-LABEL exe.dev/login-user="your-username"
+LABEL exe.dev/login-user=exedev
 ```
 
 ### Shell Configuration Not Loading
@@ -251,7 +236,7 @@ exe.dev uses the SSH username to determine which VM to connect to:
 ssh alice@myvm.exe.xyz  # Connects to VM "alice", NOT "myvm"!
 ```
 
-**Fix**: Don't specify a username - just use the hostname:
+**Fix**: User must be exedev
 ```bash
-ssh myvm.exe.xyz  # Connects to VM "myvm"
+ssh exedev@myvm.exe.xyz  # Connects to VM "myvm"
 ```
