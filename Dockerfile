@@ -1,1 +1,1 @@
-FROM  docker.io/library/alpine:latest
+FROM ubuntu:24.04
