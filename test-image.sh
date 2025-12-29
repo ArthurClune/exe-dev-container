@@ -62,9 +62,16 @@ else
 fi
 echo
 
-# Test 3: Check user exists and has correct shell
+# Test 3: Check user exists and has correct shell and UID
 info "Checking user configuration..."
 docker run --rm "$IMAGE_NAME" id exedev >/dev/null 2>&1 && pass "User 'exedev' exists" || fail "User 'exedev' not found"
+
+UID_CHECK=$(docker run --rm "$IMAGE_NAME" id -u exedev)
+if [ "$UID_CHECK" = "1000" ]; then
+    pass "User UID is 1000 (required by exe.dev)"
+else
+    fail "User UID is '$UID_CHECK', must be 1000 for exe.dev"
+fi
 
 SHELL=$(docker run --rm "$IMAGE_NAME" getent passwd exedev | cut -d: -f7)
 if [ "$SHELL" = "/bin/zsh" ]; then

@@ -34,8 +34,8 @@ RUN curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 # Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Create user exedev with sudo
-RUN useradd -m -s /bin/zsh exedev \
+# Create user exedev with sudo (UID 1000 required by exe.dev)
+RUN useradd -m -s /bin/zsh -u 1000 exedev \
     && echo "exedev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 

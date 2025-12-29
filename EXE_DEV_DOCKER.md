@@ -14,16 +14,17 @@ LABEL exe.dev/login-user="your-username"
 
 This label tells exe.dev which user account to use when establishing SSH sessions.
 
-### 2. Create a Non-Root User
+### 2. Create a Non-Root User with UID 1000
 
-Create a user that matches the label above:
+Create a user that matches the label above with **UID 1000**:
 
 ```dockerfile
-RUN useradd -m -s /bin/zsh your-username \
+RUN useradd -m -s /bin/zsh -u 1000 your-username \
     && echo "your-username ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 ```
 
 Key points:
+- Use `-u 1000` to set UID to 1000 (required by exe.dev)
 - Use `-m` to create a home directory
 - Use `-s /bin/zsh` or `-s /bin/bash` to set the login shell
 - Grant sudo access if needed (recommended for development containers)
@@ -110,8 +111,8 @@ RUN apt-get update && apt-get install -y \
     curl git zsh sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Create user with sudo access
-RUN useradd -m -s /bin/zsh devuser \
+# Create user with sudo access (UID 1000 required)
+RUN useradd -m -s /bin/zsh -u 1000 devuser \
     && echo "devuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Copy shell configuration
