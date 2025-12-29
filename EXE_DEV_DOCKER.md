@@ -2,6 +2,16 @@
 
 This document explains the changes needed to make a standard Docker image work with exe.dev's SSH-based container access.
 
+## Quick Reference
+
+Your Dockerfile must have:
+
+| Requirement | Example |
+|-------------|---------|
+| Login user label | `LABEL exe.dev/login-user="exedev"` |
+| User with UID 1000 | `useradd -m -s /bin/zsh -u 1000 exedev` |
+| Container runs as root | `USER root` at end of Dockerfile |
+
 ## Required Changes
 
 ### 1. Add the Login User Label
@@ -136,3 +146,46 @@ EXPOSE 3000 8080
 ```
 
 Access via `https://your-vm.exe.xyz` (default port) or `https://your-vm.exe.xyz:3000/` for specific ports.
+
+## Troubleshooting
+
+### SSH Authentication Fails ("SSH keys are required")
+
+**Cause**: User UID is not 1000, or container is not running as root.
+
+**Fix**: Ensure your Dockerfile has:
+```dockerfile
+RUN useradd -m -s /bin/zsh -u 1000 your-username  # Note: -u 1000
+# ... at end of file:
+USER root
+```
+
+**Verify**:
+```bash
+docker inspect your-image --format '{{.Config.User}}'  # Should be: root (or empty)
+docker run --rm your-image id your-username            # Should show: uid=1000
+```
+
+### Logs In As Root Instead of Expected User
+
+**Cause**: Missing `exe.dev/login-user` label.
+
+**Fix**: Add the label to your Dockerfile:
+```dockerfile
+LABEL exe.dev/login-user="your-username"
+```
+
+### Shell Configuration Not Loading
+
+**Cause**: ENTRYPOINT scripts don't run for SSH logins.
+
+**Fix**: Put setup in shell config files (`~/.zshrc`, `~/.zprofile`, `~/.bashrc`) instead of entrypoint scripts.
+
+### TERM Variable Issues (No Colors, Broken Prompt)
+
+**Cause**: Some SSH clients or terminal emulators don't set TERM properly.
+
+**Fix**: Add to `~/.zshenv` or `~/.bashrc`:
+```bash
+[[ "$TERM" == "dumb" || -z "$TERM" ]] && export TERM=xterm-256color
+```
