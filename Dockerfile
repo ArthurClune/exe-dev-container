@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-LABEL exe.dev/login-user=exedev
+# LABEL exe.dev/login-user=exedev
 
 # # Default proxy ports for exe.dev HTTPS proxy
 # EXPOSE 8000 9999
@@ -39,6 +39,7 @@ RUN curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 
 # Claude Code
 RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g ccusage
 
 # Create user exedev with sudo (UID 1000 required by exe.dev)
 # Ubuntu 24.04 has a default 'ubuntu' user with UID 1000, remove it first
@@ -82,8 +83,8 @@ RUN mkdir -p ~/.config \
     && cp /tmp/starship.toml ~/.config/starship.toml
 
 # Copy and set up init script (required for systemd)
-USER root
-COPY files/init /usr/local/bin/init
-RUN chmod +x /usr/local/bin/init
+# USER root
+# COPY files/init /usr/local/bin/init
+# RUN chmod +x /usr/local/bin/init
 
-CMD ["/usr/local/bin/init"]
+# CMD ["/usr/local/bin/init"]
